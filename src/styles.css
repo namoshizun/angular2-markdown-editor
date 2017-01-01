@@ -1,0 +1,13 @@
+.CodeMirror {
+  height: 100vh;
+}
+
+#md-result {
+  height: 100vh;
+  overflow: scroll;
+}
+
+/*TABLE */
+table { border-collapse: collapse; border-spacing: 0; }
+td, th { vertical-align: top; padding: 4px 10px; border: 1px solid #bbb; }
+tr:nth-child(even) td, tr:nth-child(even) th { background: #eee; }
