@@ -1,17 +1,18 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { BehaviorSubject } from "rxjs/BehaviorSubject";
+import { Subject } from "rxjs/Subject";
 import { Subscription } from "rxjs/Subscription";
+
 import '../vendor';
 
 @Component({
   selector: 'blog-editor',
   templateUrl: 'templates/editor.html',
 })
-export class BlogEditorComponent implements OnInit, OnDestroy {
+export class EditiorComponent implements OnInit, OnDestroy {
 
   text: string = '';
   sub$: Subscription;
-  input$ = new BehaviorSubject<string>('');
+  input$ = new Subject<string>();
 
   constructor() { }
 

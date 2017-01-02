@@ -1,10 +1,14 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-xs-6">
-      <markdown-editor (onTextInput)="passText($event)"></markdown-editor>
+      <markdown-editor  #editor
+                        (onTextInput)="passText($event)"
+                        (onScroll)="viewer.scrollTo($event)"></markdown-editor>
     </div>
-    <div class="col-xs-6" id="md-result">
-      <markdown-viewer [content]="text"></markdown-viewer>
+    <div class="col-xs-6">
+      <markdown-viewer #viewer
+                       [content]="text"
+                       (onScroll)="editor.scrollTo($event)"></markdown-viewer>
     </div>
   </div>
 </div>

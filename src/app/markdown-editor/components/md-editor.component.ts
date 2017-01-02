@@ -7,8 +7,11 @@ declare var CodeMirror: any;
   selector: 'markdown-editor',
   template: `<textarea id="code"></textarea>`,
 })
-export class EditorComponent implements OnInit, OnDestroy {
+export class MdEditorComponent implements OnInit, OnDestroy {
   @Output() onTextInput = new EventEmitter<string>();
+  @Output() onScroll = new EventEmitter<number>();
+
+  isAdjustingView: boolean = false;
   editor: any;
 
   readonly config = {
@@ -23,17 +26,33 @@ export class EditorComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.editor = CodeMirror.fromTextArea(document.getElementById('code'), this.config);
+    this.editor.on('change', this.handleChange.bind(this));
+    this.editor.on('scroll', this.handleScroll.bind(this));
+
     this.mdService.loadSampleMarkdown()
-      .then((sample: string) => {
-        this.editor.on('change', this.handleChange.bind(this));
-        this.editor.setValue(sample);
-      })
+      .then((sample: string) => this.editor.setValue(sample))
       .catch(error => alert('Sorry, the sample cannot be loaded'))
   }
 
   ngOnDestroy() { this.editor = null }
 
-  handleChange(_, __) {
+  scrollTo(ratio: number): void {
+    this.isAdjustingView = true;
+    let yPos = (this.editor.getScrollInfo().height - this.editor.getScrollInfo().clientHeight) * ratio;
+    this.editor.scrollTo(0, yPos); // x, y
+  }
+
+  // EVENTS
+  handleChange(cm, evt) {
     this.onTextInput.emit(this.editor.getValue());
+  }
+
+  handleScroll(cm) {
+    if (!this.isAdjustingView) {
+      let height = cm.getScrollInfo().height - cm.getScrollInfo().clientHeight;
+      let ratio = parseFloat(cm.getScrollInfo().top) / height;
+      this.onScroll.emit(ratio);
+    }
+    this.isAdjustingView = false;
   }
 }
