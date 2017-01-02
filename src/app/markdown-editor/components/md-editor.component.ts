@@ -1,5 +1,11 @@
-import { Component, Output, OnInit, OnDestroy, EventEmitter } from '@angular/core';
+import { Component, Output } from '@angular/core';
+import { OnInit, OnDestroy, EventEmitter, ElementRef } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
+import { Subscription } from "rxjs/Subscription";
+
 import { MarkdownService } from '../markdown.service';
+import { Scrollable } from '../../shared/types';
+import '../../vendor';
 
 declare var CodeMirror: any;
 
@@ -7,11 +13,11 @@ declare var CodeMirror: any;
   selector: 'markdown-editor',
   template: `<textarea id="code"></textarea>`,
 })
-export class MdEditorComponent implements OnInit, OnDestroy {
+export class MdEditorComponent implements OnInit, OnDestroy, Scrollable {
   @Output() onTextInput = new EventEmitter<string>();
   @Output() onScroll = new EventEmitter<number>();
 
-  isAdjustingView: boolean = false;
+  $subscriptions: Subscription[] = [];
   editor: any;
 
   readonly config = {
@@ -22,37 +28,47 @@ export class MdEditorComponent implements OnInit, OnDestroy {
     theme: 'base16-light'
   };
 
-  constructor(private mdService: MarkdownService) {}
+  constructor(private el: ElementRef,
+              private mdService: MarkdownService) {}
 
   ngOnInit() {
     this.editor = CodeMirror.fromTextArea(document.getElementById('code'), this.config);
     this.editor.on('change', this.handleChange.bind(this));
-    this.editor.on('scroll', this.handleScroll.bind(this));
+    this.setupStreams();
 
     this.mdService.loadSampleMarkdown()
       .then((sample: string) => this.editor.setValue(sample))
       .catch(error => alert('Sorry, the sample cannot be loaded'))
   }
 
-  ngOnDestroy() { this.editor = null }
+  ngOnDestroy() {
+    this.editor = null;
+    this.$subscriptions.forEach(sub => sub.unsubscribe());
+  }
 
   scrollTo(ratio: number): void {
-    this.isAdjustingView = true;
     let yPos = (this.editor.getScrollInfo().height - this.editor.getScrollInfo().clientHeight) * ratio;
     this.editor.scrollTo(0, yPos); // x, y
+  }
+
+  setupStreams(): void {
+    this.$subscriptions.push(
+      Observable.fromEvent(this.el.nativeElement, 'mouseenter')
+        .flatMap(init => this.makeScrollStream())
+        .subscribe((ratio) => this.onScroll.emit(ratio))
+    );
+  }
+
+  makeScrollStream(): Observable<any> {
+    let $scroll = Observable.fromEvent(this.editor, 'scroll');
+    let $mouseleave = Observable.fromEvent(this.el.nativeElement, 'mouseleave');
+    return $scroll.map((cm: any) => {
+      return parseFloat(cm.getScrollInfo().top) / (cm.getScrollInfo().height - cm.getScrollInfo().clientHeight)
+    }).takeUntil($mouseleave);
   }
 
   // EVENTS
   handleChange(cm, evt) {
     this.onTextInput.emit(this.editor.getValue());
-  }
-
-  handleScroll(cm) {
-    if (!this.isAdjustingView) {
-      let height = cm.getScrollInfo().height - cm.getScrollInfo().clientHeight;
-      let ratio = parseFloat(cm.getScrollInfo().top) / height;
-      this.onScroll.emit(ratio);
-    }
-    this.isAdjustingView = false;
   }
 }
