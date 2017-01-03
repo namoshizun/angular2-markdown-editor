@@ -9,7 +9,7 @@ This is a minimal markdown editor developed using [Angular2](https://github.com/
 * CodeMirror@2.4.1: 'a versatile text editor'
 * Markdown-it@8.2.2: generates HTML from markdown code. 
 * Highlight.js@9.9.0: complements the Markdown-it to have syntax highlighting for code blocks.
-
+* ng2-bootstrap@^1.1.16-11: provides useful Bootstrap components for Angular2 web app. 
 
 
 ## Preview

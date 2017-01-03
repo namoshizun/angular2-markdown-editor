@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subject } from "rxjs/Subject";
 import { Subscription } from "rxjs/Subscription";
 
+import { ToolBarItem } from '../shared/types';
 import '../vendor';
 
 @Component({
@@ -13,6 +14,15 @@ export class EditiorComponent implements OnInit, OnDestroy {
   text: string = '';
   sub$: Subscription;
   input$ = new Subject<string>();
+
+  readonly toolbarItems: ToolBarItem[][] = [
+    [{ name: 'Preview', tooltip: 'Preview', glyph: 'glyphicon glyphicon-eye-open',
+      callback: (evt) => alert('dummy button') }],
+    [
+      { name: 'Full Screen', tooltip: 'Full Screen',glyph: 'glyphicon glyphicon-fullscreen' },
+      { name: 'Split', tooltip: 'Split',glyph: 'glyphicon glyphicon-resize-horizontal' }
+    ]
+  ];
 
   constructor() { }
 

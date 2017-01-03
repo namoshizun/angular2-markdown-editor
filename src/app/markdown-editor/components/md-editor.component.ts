@@ -11,7 +11,9 @@ declare var CodeMirror: any;
 
 @Component({
   selector: 'markdown-editor',
-  template: `<textarea id="code"></textarea>`,
+  template: `
+    <textarea id="code"></textarea>
+  `,
 })
 export class MdEditorComponent implements OnInit, OnDestroy, Scrollable {
   @Output() onTextInput = new EventEmitter<string>();

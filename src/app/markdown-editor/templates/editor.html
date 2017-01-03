@@ -1,6 +1,7 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-xs-6">
+      <toolbar [items]="toolbarItems"></toolbar>
       <markdown-editor  #editor
                         (onTextInput)="passText($event)"
                         (onScroll)="viewer.scrollTo($event)"></markdown-editor>
