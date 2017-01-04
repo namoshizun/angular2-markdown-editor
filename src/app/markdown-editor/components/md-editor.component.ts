@@ -1,4 +1,4 @@
-import { Component, Output } from '@angular/core';
+import {Component, Output } from '@angular/core';
 import { OnInit, OnDestroy, EventEmitter, ElementRef } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from "rxjs/Subscription";

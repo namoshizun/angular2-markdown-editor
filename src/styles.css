@@ -1,3 +1,4 @@
+/* ----------- Editor Component -----------*/
 .CodeMirror {
   height: 100vh;
 }
@@ -7,7 +8,24 @@
   overflow: scroll;
 }
 
-/*TABLE */
+
+/* ----------- General -----------*/
+/* Container */
+.mid-container {
+  width: 90%;
+}
+
+/* Hover */
+.hoverable:hover {
+  opacity: 1 !important;
+}
+
+.hoverable {
+  opacity: 0;
+  transition: .5s ease-in-out all;
+}
+
+/* Stripped Table */
 table { border-collapse: collapse; border-spacing: 0; }
 td, th { vertical-align: top; padding: 4px 10px; border: 1px solid #bbb; }
 tr:nth-child(even) td, tr:nth-child(even) th { background: #eee; }

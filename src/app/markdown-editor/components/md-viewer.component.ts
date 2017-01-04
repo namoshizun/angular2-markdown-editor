@@ -30,8 +30,9 @@ export class MdViewerComponent implements OnInit, OnDestroy, Scrollable {
 
   @Output() onScroll = new EventEmitter<number>();
   @Input() set content(text: string) {
-    if (text) {
-      this.viewer.innerHTML = this.render(text);
+    if (text !== undefined && text !== null) {
+      // wait a tick to mae sure view is init
+      setTimeout(() => this.viewer.innerHTML = this.render(text), 0);
     }
   }
 

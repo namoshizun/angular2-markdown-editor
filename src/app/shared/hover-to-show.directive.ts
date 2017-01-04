@@ -7,11 +7,6 @@ export class HoverToShowDirective {
 
   constructor(private el: ElementRef) {}
 
-  @HostBinding('class.show') showComponent: boolean = false;
-
-  @HostListener('mouseenter', ['$event'])
-  handleMouseEnter = (evt) => this.showComponent = true;
-
-  @HostListener('mouseleave', ['$event'])
-  handleMouseLeave = (evt) =>  this.showComponent = false;
+  // it seems that moseleave is not always fired when cursor leaves at high speed ...
+  @HostBinding('class.hoverable') makeHoverable: boolean = true;
 }

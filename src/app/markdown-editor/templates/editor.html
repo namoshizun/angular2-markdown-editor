@@ -1,15 +1,17 @@
-<div class="container-fluid">
+<div class="container-fluid"
+     [ngClass]="containerClass()"> <!-- mid-container -->
+
   <div class="row">
-    <div class="col-xs-6">
+    <div [ngClass]="editorClass()"> <!-- col-xs-6 OR col-xs-12 -->
       <toolbar [items]="toolbarItems"></toolbar>
-      <markdown-editor  #editor
-                        (onTextInput)="passText($event)"
-                        (onScroll)="viewer.scrollTo($event)"></markdown-editor>
+      <markdown-editor (onTextInput)="passText($event)"
+                       (onScroll)="viewConfig.syncViews && viewConfig.enablePreview ? mdViewer.scrollTo($event) : null">
+      </markdown-editor>
     </div>
-    <div class="col-xs-6">
-      <markdown-viewer #viewer
-                       [content]="text"
-                       (onScroll)="editor.scrollTo($event)"></markdown-viewer>
+    <div *ngIf="viewConfig.enablePreview" class="col-xs-6">
+      <markdown-viewer [content]="text"
+                       (onScroll)="viewConfig.syncViews ? mdEditor.scrollTo($event) : null">
+      </markdown-viewer>
     </div>
   </div>
 </div>

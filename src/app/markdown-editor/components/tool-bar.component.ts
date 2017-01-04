@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ToolBarItem } from '../../shared/types';
 
 @Component({
@@ -11,10 +11,11 @@ import { ToolBarItem } from '../../shared/types';
         <button type="button" *ngFor="let item of _items; let i = index">
           <span *ngFor="let state of item; let j = index"
                 placement="bottom"
-                [style.display]="isCurrState(i, j) ? 'inherit' : 'none'" 
+                [style.display]="isCurrState(i, j) ? 'block' : 'none'" 
                 [tooltip]="state.tooltip"
                 [class]="state.glyph"
-                (click)="state.callback ? state.callback($event, state.name) : null; updateState(i)">
+                (click)="state.callback ? state.callback($event, state.name) : null; updateState(i);
+                         $event.stopPropagation(); $event.preventDefault()">
           </span>
         </button>
       </div>
