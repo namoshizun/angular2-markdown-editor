@@ -10,12 +10,13 @@ This is a minimal markdown editor developed using [Angular2](https://github.com/
 * Markdown-it@8.2.2: generates HTML from markdown code. 
 * Highlight.js@9.9.0: complements the Markdown-it to have syntax highlighting for code blocks.
 * ng2-bootstrap@^1.1.16-11: provides Bootstrap components for Angular2 web app. For the time being I just use to make tooltips. 
-* RxJs@5.0.0: an amazing library for managing events and states! I use it to control the text flow from editor to viewer component, as well as the scroll events. 
+* RxJs@5.0.0: an amazing library for managing events and states! I use it to control the text flow from editor to viewer component, as well as the scroll events. It's also to greatly improve Angular change detection performance with the help of Observables 
+* FuzzySearch@1.4.0: a lightweight fuzzy search library with zero dependency.
 
 
 ## Preview
 
-Open in browser: http://fun.yz-metta.com
+Open in browser: https://fun.yz-metta.com
 
 
 
