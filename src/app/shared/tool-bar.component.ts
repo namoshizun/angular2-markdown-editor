@@ -1,20 +1,26 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { ToolBarItem } from '../../shared/types';
+import { Component, Input } from '@angular/core';
+import { OnInit, ChangeDetectionStrategy } from '@angular/core'
+import { ToolBarItem } from './types';
 
 @Component({
   selector: 'toolbar',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="btn-toolbar step" role="toolbar"
-         aria-label="toolbar with button groupts" id="toolbar" hoverToShow>
+    <div class="btn-toolbar toolbar" role="toolbar"
+         aria-label="toolbar with button groupts"
+         [ngClass]="toolbarClass"
+         id="toolbar">
+         
       <div class="btn-group" role="group" aria-label="first group">
-        <button type="button" *ngFor="let item of _items; let i = index">
+        <button type="button"
+                class="btn btn-default"
+                *ngFor="let item of _items; let i = index">
           <span *ngFor="let state of item; let j = index"
                 placement="bottom"
                 [style.display]="isCurrState(i, j) ? 'block' : 'none'" 
                 [tooltip]="state.tooltip"
                 [class]="state.glyph"
-                (click)="state.callback ? state.callback($event, state.name) : null; updateState(i);
+                (click)="state.callback ? state.callback($event) : null; updateState(i);
                          $event.stopPropagation(); $event.preventDefault()">
           </span>
         </button>
@@ -22,24 +28,34 @@ import { ToolBarItem } from '../../shared/types';
     </div>
   `,
   styles: [`
-    #toolbar {
+    .toolbar {
       z-index: 10000;
-      position: absolute;
-      right: 5%;
-      top: 1%;
     }
   `]
 })
 export class ToolBarComponent implements OnInit {
+  toolbarClass: any = {};
   stateTable: any [] = []; // { currentIndex, NumberOfStates } for each toolbar item;
   _items: ToolBarItem[][] = [];
 
+  @Input() set styleClass(klass: string) { this.toolbarClass[klass] = true };
+  @Input() set hoverToShow(yes: boolean) { yes ? this.toolbarClass['hoverable'] = true : this.toolbarClass['hoverable'] = false };
   @Input() set items (items: ToolBarItem[][]) {
     this._items = items;
     this._items.forEach(item => this.stateTable.push({
       currStateIdx: 0,
       numStates: item.length
     }));
+  }
+
+  constructor() {}
+  ngOnInit() {}
+
+  getClass(): any {
+    return {
+      hoverable: this.hoverToShow,
+
+    }
   }
 
   isCurrState(itemIdx, stateIdx): boolean {
@@ -51,8 +67,4 @@ export class ToolBarComponent implements OnInit {
       ? this.stateTable[itemIdx].currStateIdx = 0
       : this.stateTable[itemIdx].currStateIdx += 1;
   }
-
-
-  constructor() {}
-  ngOnInit() {}
 }

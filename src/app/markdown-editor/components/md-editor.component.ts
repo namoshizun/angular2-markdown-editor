@@ -1,21 +1,22 @@
-import {Component, Output } from '@angular/core';
+import {Component, Input, Output, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { OnInit, OnDestroy, EventEmitter, ElementRef } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from "rxjs/Subscription";
 
-import { MarkdownService } from '../markdown.service';
-import { Scrollable } from '../../shared/types';
+import { Scrollable, Note } from '../../shared/types';
 import '../../vendor';
 
 declare var CodeMirror: any;
 
 @Component({
   selector: 'markdown-editor',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <textarea id="code"></textarea>
   `,
 })
 export class MdEditorComponent implements OnInit, OnDestroy, Scrollable {
+  @Input() noteStream: Observable<Note>;
   @Output() onTextInput = new EventEmitter<string>();
   @Output() onScroll = new EventEmitter<number>();
 
@@ -30,22 +31,18 @@ export class MdEditorComponent implements OnInit, OnDestroy, Scrollable {
     theme: 'base16-light'
   };
 
-  constructor(private el: ElementRef,
-              private mdService: MarkdownService) {}
+  constructor(private el: ElementRef, private cd: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.editor = CodeMirror.fromTextArea(document.getElementById('code'), this.config);
     this.editor.on('change', this.handleChange.bind(this));
     this.setupStreams();
-
-    this.mdService.loadSampleMarkdown()
-      .then((sample: string) => this.editor.setValue(sample))
-      .catch(error => alert('Sorry, the sample cannot be loaded'))
   }
 
   ngOnDestroy() {
-    this.editor = null;
     this.$subscriptions.forEach(sub => sub.unsubscribe());
+    this.editor.off('change', this.handleChange.bind(this));
+    this.editor = null;
   }
 
   scrollTo(ratio: number): void {
@@ -55,10 +52,17 @@ export class MdEditorComponent implements OnInit, OnDestroy, Scrollable {
 
   setupStreams(): void {
     this.$subscriptions.push(
+      // scroll stream
       Observable.fromEvent(this.el.nativeElement, 'mouseenter')
         .flatMap(init => this.makeScrollStream())
-        .subscribe((ratio) => this.onScroll.emit(ratio))
-    );
+        .subscribe((ratio) => this.onScroll.emit(ratio)),
+
+      // note stream
+      this.noteStream.subscribe((note: Note) => {
+        note ? this.editor.setValue(note.text) : this.editor.setValue('');
+        this.cd.markForCheck();
+      })
+    )
   }
 
   makeScrollStream(): Observable<any> {

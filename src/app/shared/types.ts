@@ -8,3 +8,10 @@ export interface ToolBarItem {
   tooltip?: string,
   callback?: Function
 }
+
+export interface Note {
+  dateOfCreation: Date,
+  text?: string,
+  title?: string,
+  author?: string,
+}

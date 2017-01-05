@@ -1,4 +1,4 @@
-import { Component, Input, Output } from '@angular/core';
+import {Component, Input, Output, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { ElementRef, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from "rxjs/Subscription";
@@ -11,6 +11,7 @@ var hljs = require('highlight.js');
 
 @Component({
   selector: 'markdown-viewer',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<div id="md-result"></div>`
 })
 export class MdViewerComponent implements OnInit, OnDestroy, Scrollable {
@@ -28,19 +29,15 @@ export class MdViewerComponent implements OnInit, OnDestroy, Scrollable {
     }
   };
 
+  @Input() contentStream: Observable<string>;
   @Output() onScroll = new EventEmitter<number>();
-  @Input() set content(text: string) {
-    if (text !== undefined && text !== null) {
-      // wait a tick to mae sure view is init
-      setTimeout(() => this.viewer.innerHTML = this.render(text), 0);
-    }
-  }
 
   $subscriptions: Subscription[] = [];
   viewer: HTMLDivElement;
   md: any;
 
-  constructor(private el: ElementRef) {
+  constructor(private el: ElementRef,
+              private cd: ChangeDetectorRef) {
     this.md = new MarkdownIt(this.config);
   }
 
@@ -54,24 +51,33 @@ export class MdViewerComponent implements OnInit, OnDestroy, Scrollable {
     this.$subscriptions.forEach(sub => sub.unsubscribe());
   }
 
-  scrollTo(ratio: number): void {
-    this.viewer.scrollTop = (this.viewer.scrollHeight - this.viewer.clientHeight) * ratio;
-  }
-
   setupStreams(): void {
-    this.$subscriptions.push( // fixme: NOT DRY!!
+    this.$subscriptions.push(
+      // scroll stream
       Observable.fromEvent(this.el.nativeElement, 'mouseenter')
         .flatMap(init => this.makeScrollStream())
-        .subscribe((ratio) => this.onScroll.emit(ratio))
+        .subscribe((ratio) => this.onScroll.emit(ratio)),
+      // text stream
+      this.contentStream
+        .distinctUntilChanged()
+        .debounceTime(300)
+        .subscribe((text: string) => {
+          this.viewer.innerHTML = this.render(text);
+          this.cd.markForCheck();
+        })
     );
   }
 
   makeScrollStream(): Observable<any> {
-    let $scroll = Observable.fromEvent(this.viewer, 'scroll');
-    let $mouseleave = Observable.fromEvent(this.el.nativeElement, 'mouseleave');
-    return $scroll.map(_ => {
+    let scrollStream = Observable.fromEvent(this.viewer, 'scroll');
+    let mouseleaveStream = Observable.fromEvent(this.el.nativeElement, 'mouseleave');
+    return scrollStream.map(_ => {
       return this.viewer.scrollTop / (this.viewer.scrollHeight - this.viewer.clientHeight)
-    }).takeUntil($mouseleave);
+    }).takeUntil(mouseleaveStream);
+  }
+
+  scrollTo(ratio: number): void {
+    this.viewer.scrollTop = (this.viewer.scrollHeight - this.viewer.clientHeight) * ratio;
   }
 
   render(text: string): string {

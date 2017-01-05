@@ -1,16 +1,27 @@
-<div class="container-fluid"
-     [ngClass]="containerClass()"> <!-- mid-container -->
+<div class="container-fluid">
 
   <div class="row">
-    <div [ngClass]="editorClass()"> <!-- col-xs-6 OR col-xs-12 -->
-      <toolbar [items]="toolbarItems"></toolbar>
-      <markdown-editor (onTextInput)="passText($event)"
-                       (onScroll)="viewConfig.syncViews && viewConfig.enablePreview ? mdViewer.scrollTo($event) : null">
+    <!--NOTE NAVIGATOR-->
+    <div class="col-xs-2">
+      <source-navigator (onSelectNote)="passNote($event); false"></source-navigator>
+    </div>
+
+    <!--NOTE EDITOR-->
+    <div [ngClass]="editorClass()"> <!-- !preview => col-xs-8; preview => col-xs-5 -->
+      <toolbar  [hoverToShow]="true"
+                [styleClass]="'editor-toolbar'"
+                [items]="toolbarItems">
+      </toolbar>
+      <markdown-editor [noteStream]="choosenNoteStream"
+                       (onTextInput)="passText($event); false"
+                       (onScroll)="syncViews($event, true); false">
       </markdown-editor>
     </div>
-    <div *ngIf="viewConfig.enablePreview" class="col-xs-6">
-      <markdown-viewer [content]="text"
-                       (onScroll)="viewConfig.syncViews ? mdEditor.scrollTo($event) : null">
+
+    <!--NOTE PREVIEWER-->
+    <div *ngIf="viewConfig.enablePreview" class="col-xs-5">
+      <markdown-viewer [contentStream]="textStream"
+                       (onScroll)="syncViews($event, false)">
       </markdown-viewer>
     </div>
   </div>

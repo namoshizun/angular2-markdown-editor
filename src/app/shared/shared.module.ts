@@ -2,22 +2,25 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { CommonModule } from "@angular/common";
+import { TooltipModule } from 'ng2-bootstrap/tooltip';
 
-import { HoverToShowDirective } from './hover-to-show.directive';
-
+import { ToolBarComponent } from './tool-bar.component';
 
 @NgModule({
   imports: [
     FormsModule,
-    HttpModule
+    CommonModule,
+    HttpModule,
+    TooltipModule.forRoot(),
   ],
   declarations: [
-    HoverToShowDirective
+    ToolBarComponent
   ],
   exports: [
     FormsModule,
     CommonModule,
-    HoverToShowDirective,
+    HttpModule,
+    ToolBarComponent
   ]
 })
 export class SharedModule { }

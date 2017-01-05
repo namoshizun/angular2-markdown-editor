@@ -1,11 +1,12 @@
 import {Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { ReplaySubject } from "rxjs/ReplaySubject";
 import { MdEditorComponent } from "./components/md-editor.component";
 import { MdViewerComponent } from "./components/md-viewer.component";
-import { Subject } from "rxjs/Subject";
-import { Subscription } from "rxjs/Subscription";
+import { SourceNavigatorComponent } from "./components/source-navigator.component";
 
-import { ToolBarItem } from '../shared/types';
 import '../vendor';
+import { ToolBarItem, Note } from '../shared/types';
+import { MarkdownService } from "./markdown.service";
 
 @Component({
   selector: 'blog-editor',
@@ -15,29 +16,21 @@ export class EditiorComponent implements OnInit, OnDestroy {
 
   @ViewChild(MdEditorComponent) private mdEditor: MdEditorComponent;
   @ViewChild(MdViewerComponent) private mdViewer: MdViewerComponent;
+  @ViewChild(SourceNavigatorComponent) private noteNav: SourceNavigatorComponent;
 
-  text: string = '';
-  sub$: Subscription;
-  input$ = new Subject<string>();
-  viewConfig = {
-    fullScreen: false,
+  textStream = new ReplaySubject<string>(1);
+  choosenNoteStream = new ReplaySubject<Note>(1);
+
+  viewConfig = { // default setting
     syncViews: true,
     enablePreview: true
   };
-
-
   readonly toolbarItems: ToolBarItem[][] = [
     [
       { tooltip: 'Close Preview', glyph: 'glyphicon glyphicon-eye-close',
         callback: () => this.viewConfig.enablePreview = false },
       { tooltip: 'Preview', glyph: 'glyphicon glyphicon-eye-open',
         callback: () => this.viewConfig.enablePreview = true }
-    ],
-    [
-      { tooltip: 'Full Screen',glyph: 'glyphicon glyphicon-fullscreen',
-        callback: () => this.viewConfig.fullScreen = true },
-      { tooltip: 'Narrow Screen',glyph: 'glyphicon glyphicon-resize-small',
-        callback: () => this.viewConfig.fullScreen = false }
     ],
     [
       { tooltip: 'No Sync',glyph: 'glyphicon glyphicon-random',
@@ -47,35 +40,41 @@ export class EditiorComponent implements OnInit, OnDestroy {
     ]
   ];
 
-  constructor() {}
+  constructor(private mdService: MarkdownService) {}
 
   ngOnInit() {
-
-    this.sub$ = this.input$
-      .distinctUntilChanged()
-      .debounceTime(300)
-      .subscribe(text => this.text = text);
+    this.mdService.loadSampleMarkdown()
+      .then(ok => this.noteNav.reset())
+      .catch(error => alert('Sorry, cannot load the sample markdown'));
   }
 
-  ngOnDestroy() {
-    if (this.sub$) this.sub$.unsubscribe();
-  }
-
-  passText(text: string): void {
-    this.input$.next(text);
-  }
+  ngOnDestroy() {}
 
   // Dynamic css class providers
   editorClass(): any {
    return {
-     'col-xs-12': !this.viewConfig.enablePreview,
-     'col-xs-6': this.viewConfig.enablePreview,
+     'col-xs-8': !this.viewConfig.enablePreview,
+     'col-xs-5': this.viewConfig.enablePreview,
    }
   }
 
-  containerClass(): any {
-    return {
-      'mid-container': !this.viewConfig.fullScreen
+  // EVENT HANDLERS
+  passText(text: string): void {
+    this.textStream.next(text);
+  }
+
+  passNote(noteTitle: string): void {
+    this.choosenNoteStream.next(this.mdService.notes.find((note: Note) => note.title === noteTitle));
+  }
+
+  syncViews(ratio: number, fromEditorToViewer: boolean): void {
+    if (this.viewConfig.syncViews) {
+      if (fromEditorToViewer && this.viewConfig.enablePreview) {
+        this.mdViewer.scrollTo(ratio);
+      }
+      else {
+        this.mdEditor.scrollTo(ratio);
+      }
     }
   }
 }
