@@ -78,8 +78,7 @@ export class SourceNavigatorComponent implements OnInit, OnDestroy {
 
     // setup the update request stream for note saving states
     this.$subscriptions.push(Observable.from(this.clickStream)
-      .switchMapTo(this.saveStateUpdateRequestStream)
-      .skip(1) // ignore the first request which is triggered by note selection. fixme, not working yet...
+      .switchMapTo(this.saveStateUpdateRequestStream.skip(1)) // ignore the first request which is triggered by note selection
       .subscribe(request => {
         let [saved, title] = [...request];
         let idx = this.noteTitles.indexOf(title as string);
@@ -121,8 +120,9 @@ export class SourceNavigatorComponent implements OnInit, OnDestroy {
   handleSelectNote(evt: any, noteTitle: string): void {
     this.cleanEvent(evt);
     this.choosen = noteTitle;
-    this.onSelectNote.emit(noteTitle);
+
     this.clickStream.next(noteTitle);
+    this.onSelectNote.emit(noteTitle);
   }
 
   handleSearch(term: string) {
