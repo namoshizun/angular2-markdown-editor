@@ -1,0 +1,37 @@
+<modal *ngIf="form"
+       #modal [title]="modalTitle">
+
+  <span class="glyphicon glyphicon-ok confirm-btn" (click)="submit(form); modal.toggle()"></span>
+
+  <form [formGroup]="form">
+    <!-- group[1]: local file upload -->
+    <div class="row">
+      <div class="col-xs-2"><h4>Local File</h4></div>
+      <div class="col-xs-10">
+        <div formArrayName="local" class="row">
+          <div *ngFor="let group of form.controls.local.controls; let i = index">
+            <source-input [group]="group" [question]="localSourceQuestion"></source-input>
+            <source-input [group]="group" [question]="titleQuestion"></source-input>
+            <span class="glyphicon glyphicon-minus col-xs-1" (click)="handleDeleteGroup('local', i)"></span>
+            <span class="glyphicon glyphicon-plus col-xs-1" (click)="handleAddGroup('local')"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <!-- group[2]: online resource upload-->
+    <div class="row">
+      <div class="col-xs-2"><h4>Paste Url</h4></div>
+      <div class="col-xs-10">
+        <div formArrayName="url" class="row">
+          <div *ngFor="let group of form.controls.url.controls; let i = index">
+            <source-input [group]="group" [question]="urlSourceQuestion"></source-input>
+            <source-input [group]="group" [question]="titleQuestion"></source-input>
+            <span class="glyphicon glyphicon-minus col-xs-1" (click)="handleDeleteGroup('url', i)"></span>
+            <span class="glyphicon glyphicon-plus col-xs-1" (click)="handleAddGroup('url')"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</modal>

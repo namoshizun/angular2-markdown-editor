@@ -1,4 +1,4 @@
-/* ----------- Editor Component -----------*/
+/* ----------- Editor & Previewer -----------*/
 .CodeMirror {
   height: 100vh;
 }
@@ -8,8 +8,44 @@
   overflow: scroll;
 }
 
+/* ----------- TooBar -----------*/
+.nav-toolbar .glyphicon {
+  font-size: 20px;
+}
+
+.nav-toolbar .btn-group {
+  width: 99%;
+}
+
+.nav-toolbar .btn {
+  width: 25%;
+}
+
+.editor-toolbar {
+  position: absolute;
+  right: 6%;
+  top: 1%;
+}
 
 /* ----------- General -----------*/
+/*RED DOT INDICATOR FOR UNSAVED NOTES*/
+.red-dot {
+  float: left;
+  width: 5px;
+  height: 5px;
+}
+
+.red-dot:before {
+  position: absolute;
+  content: '';
+  background-color:#FF0000;
+  border-radius:50%;
+  opacity:0.5;
+  width: 5px;
+  height: 5px;
+  pointer-events: none;
+}
+
 /* Container */
 .mid-container {
   width: 90%;

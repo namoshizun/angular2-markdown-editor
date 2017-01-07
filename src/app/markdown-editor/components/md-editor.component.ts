@@ -3,7 +3,7 @@ import { OnInit, OnDestroy, EventEmitter, ElementRef } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from "rxjs/Subscription";
 
-import { Scrollable, Note } from '../../shared/types';
+import { Scrollable, Note } from '../../core/types';
 import '../../vendor';
 
 declare var CodeMirror: any;
@@ -59,7 +59,7 @@ export class MdEditorComponent implements OnInit, OnDestroy, Scrollable {
 
       // note stream
       this.noteStream.subscribe((note: Note) => {
-        note ? this.editor.setValue(note.text) : this.editor.setValue('');
+        this.editor.setValue(note.text);
         this.cd.markForCheck();
       })
     )

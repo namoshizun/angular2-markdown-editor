@@ -2,12 +2,14 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { SharedModule} from '../shared/shared.module';
 
+import { SourceInputComponent } from './components/source-input.component';
 import { SourceNavigatorComponent } from './components/source-navigator.component';
+import { UploaderModalComponent } from './components/uploader-modal.component';
 import { MdEditorComponent } from './components/md-editor.component';
 import { MdViewerComponent } from "./components/md-viewer.component";
 import { EditiorComponent } from "./editor.component";
 
-import { MarkdownService } from './markdown.service';
+import { MarkdownService } from '../core/services/markdown.service';
 
 @NgModule({
   imports: [
@@ -24,6 +26,8 @@ import { MarkdownService } from './markdown.service';
     MdViewerComponent,
     MdEditorComponent,
     SourceNavigatorComponent,
+    SourceInputComponent,
+    UploaderModalComponent,
   ],
   providers: [MarkdownService]
 })

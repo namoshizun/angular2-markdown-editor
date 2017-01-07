@@ -3,7 +3,7 @@ import { ElementRef, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from "rxjs/Subscription";
 
-import { Scrollable } from '../../shared/types';
+import { Scrollable } from '../../core/types';
 import '../../vendor';
 
 var MarkdownIt = require('markdown-it');
@@ -59,10 +59,9 @@ export class MdViewerComponent implements OnInit, OnDestroy, Scrollable {
         .subscribe((ratio) => this.onScroll.emit(ratio)),
       // text stream
       this.contentStream
-        .distinctUntilChanged()
-        .debounceTime(300)
+        .debounceTime(250)
         .subscribe((text: string) => {
-          this.viewer.innerHTML = this.render(text);
+          this.viewer.innerHTML = this.md.render(text);
           this.cd.markForCheck();
         })
     );
@@ -78,9 +77,5 @@ export class MdViewerComponent implements OnInit, OnDestroy, Scrollable {
 
   scrollTo(ratio: number): void {
     this.viewer.scrollTop = (this.viewer.scrollHeight - this.viewer.clientHeight) * ratio;
-  }
-
-  render(text: string): string {
-    return this.md.render(text);
   }
 }

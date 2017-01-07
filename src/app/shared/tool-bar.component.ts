@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { OnInit, ChangeDetectionStrategy } from '@angular/core'
-import { ToolBarItem } from './types';
+import { ToolBarItem } from '../core/types';
 
 @Component({
   selector: 'toolbar',
@@ -8,8 +8,7 @@ import { ToolBarItem } from './types';
   template: `
     <div class="btn-toolbar toolbar" role="toolbar"
          aria-label="toolbar with button groupts"
-         [ngClass]="toolbarClass"
-         id="toolbar">
+         [ngClass]="toolbarClass">
          
       <div class="btn-group" role="group" aria-label="first group">
         <button type="button"
@@ -20,7 +19,7 @@ import { ToolBarItem } from './types';
                 [style.display]="isCurrState(i, j) ? 'block' : 'none'" 
                 [tooltip]="state.tooltip"
                 [class]="state.glyph"
-                (click)="state.callback ? state.callback($event) : null; updateState(i);
+                (click)="state.callback ? state.callback() : null; updateState(i);
                          $event.stopPropagation(); $event.preventDefault()">
           </span>
         </button>
@@ -38,8 +37,10 @@ export class ToolBarComponent implements OnInit {
   stateTable: any [] = []; // { currentIndex, NumberOfStates } for each toolbar item;
   _items: ToolBarItem[][] = [];
 
-  @Input() set styleClass(klass: string) { this.toolbarClass[klass] = true };
-  @Input() set hoverToShow(yes: boolean) { yes ? this.toolbarClass['hoverable'] = true : this.toolbarClass['hoverable'] = false };
+  @Input() set styleClasses(classes: string) {
+    let klasses = classes.split(' ');
+    klasses.forEach(klass => this.toolbarClass[klass] = true);
+  };
   @Input() set items (items: ToolBarItem[][]) {
     this._items = items;
     this._items.forEach(item => this.stateTable.push({
@@ -50,13 +51,6 @@ export class ToolBarComponent implements OnInit {
 
   constructor() {}
   ngOnInit() {}
-
-  getClass(): any {
-    return {
-      hoverable: this.hoverToShow,
-
-    }
-  }
 
   isCurrState(itemIdx, stateIdx): boolean {
     return this.stateTable[itemIdx].currStateIdx === stateIdx;

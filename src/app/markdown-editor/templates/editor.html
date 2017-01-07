@@ -8,9 +8,8 @@
 
     <!--NOTE EDITOR-->
     <div [ngClass]="editorClass()"> <!-- !preview => col-xs-8; preview => col-xs-5 -->
-      <toolbar  [hoverToShow]="true"
-                [styleClass]="'editor-toolbar'"
-                [items]="toolbarItems">
+      <toolbar [styleClasses]="'editor-toolbar hoverable'"
+               [items]="toolbarItems">
       </toolbar>
       <markdown-editor [noteStream]="choosenNoteStream"
                        (onTextInput)="passText($event); false"
@@ -21,7 +20,7 @@
     <!--NOTE PREVIEWER-->
     <div *ngIf="viewConfig.enablePreview" class="col-xs-5">
       <markdown-viewer [contentStream]="textStream"
-                       (onScroll)="syncViews($event, false)">
+                       (onScroll)="syncViews($event, false); false">
       </markdown-viewer>
     </div>
   </div>
