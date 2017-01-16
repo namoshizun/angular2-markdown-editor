@@ -1,7 +1,6 @@
 <!--SEARCH BAR-->
 <div class="row">
-  <input *ngIf="viewConfig.openSearch"
-         type="text" class="form-control" placeholder="Note Title"
+  <input type="text" class="form-control" placeholder="Note Title"
          (input)="handleSearch($event.target.value)">
 </div>
 <!--TOOL BAR-->
@@ -13,15 +12,21 @@
 <!--NOTE LIST-->
 <div class="row">
   <ul class="list-group">
-    <li *ngFor="let title of matchedTitles | async; let i = index"
+    <li *ngFor="let title of matchedTitles | async;"
         class="list-group-item"
         [class.selected]="title == choosen"
         (click)="handleSelectNote($event, title);">
-      <div *ngIf="unsavedNotes.has(i)" class="red-dot"></div>
+
+      <!--change indicator-->
+      <div *ngIf="unsavedNotes.has(title)" class="red-dot"></div>
+
+      <!--editable note name-->
       <div #titleInput contenteditable="true"
            (blur)="handleFinishEditingTitle(title, titleInput.innerText)">
         {{title}}
       </div>
+
+      <!--delete icon (hidden)-->
       <span *ngIf="viewConfig.deleteNotes"
             class="glyphicon glyphicon-trash"
             style="z-index: 100; position: absolute; right:5%; top: 10px"

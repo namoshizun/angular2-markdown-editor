@@ -105,17 +105,23 @@ export class UploaderModalComponent implements OnInit {
     control.removeAt(idx);
   }
 
-  submit(form: FormGroup): void {
-    this.resetForm();
+  async submit(form: FormGroup): Promise<any> {
+    try {
+      this.resetForm();
+      // filter empty sources
+      let urlSources = form.value['url'].filter(source => source['source'] !== '');
+      let localSources = form.value['local'].filter(source => source['source'] !== '');
 
-    let urlSources = form.value['url'].filter(source => source['source'] !== '');
-    let localSources = form.value['local'].filter(source => source['source'] !== '');
-    let urls = urlSources.map(source => source['source']);
+      // download sources
+      let texts = await Promise.all(urlSources.map(url=> this.util.download(url['source'])));
+      urlSources.forEach((url, idx) => url['source'] = texts[idx]) // replace url with the actual resource
 
-    Promise.all(urls.map(url => this.util.download(url)))
-      .then(texts => urlSources.forEach((source, idx) => source['source'] = texts[idx]))
-      .then(ok => this.mdService.uploadNote(urlSources.concat(localSources)))
-      .then(ok => this.onUploadFinished.emit(ok))
-      .catch(alert);
+      // upload
+      let uploaded = await this.mdService.uploadNote(urlSources.concat(localSources));
+      uploaded ? this.onUploadFinished.emit(true) : alert('Cannot upload notes');
+    }
+    catch (error) {
+      alert('Something bad happened... Cannot upload notes!')
+    }
   }
 }

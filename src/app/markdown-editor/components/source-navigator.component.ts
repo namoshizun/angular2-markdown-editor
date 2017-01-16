@@ -23,9 +23,9 @@ export class SourceNavigatorComponent implements OnInit, OnDestroy {
   /*******************
    * state recorders *
    * ****************/
-  unsavedNotes: Set<number> = new Set();
+  unsavedNotes: Set<string> = new Set();
   viewConfig = { // default setting
-    openSearch: false,
+    syncing: false,
     deleteNotes: false,
   };
 
@@ -48,8 +48,21 @@ export class SourceNavigatorComponent implements OnInit, OnDestroy {
         callback: () => this.viewConfig.deleteNotes = false },
     ],
     [
-      { tooltip: 'Search', glyph: 'glyphicon glyphicon-search',
-        callback: () => this.viewConfig.openSearch = !this.viewConfig.openSearch }
+      { tooltip: 'Sync All', glyph: 'glyphicon glyphicon-floppy-disk',
+        callback: () => {
+          this.viewConfig.syncing = true;
+          this.mdService.syncAll()
+            .then(ok => {
+              if (ok) {
+                this.viewConfig.syncing = false;
+                this.unsavedNotes.clear();
+              } else {
+                alert('Cannot sync all');
+              }
+            })
+            .catch(alert);
+        }
+      }
     ]
   ];
 
@@ -78,11 +91,14 @@ export class SourceNavigatorComponent implements OnInit, OnDestroy {
 
     // setup the update request stream for note saving states
     this.$subscriptions.push(Observable.from(this.clickStream)
-      .switchMapTo(this.saveStateUpdateRequestStream.skip(1)) // ignore the first request which is triggered by note selection
+      .switchMapTo(
+        this.saveStateUpdateRequestStream
+        .skip(1) // ignore the first request which is triggered by note selection
+        .distinctUntilChanged()
+      )
       .subscribe(request => {
         let [saved, title] = [...request];
-        let idx = this.noteTitles.indexOf(title as string);
-        saved ? this.unsavedNotes.delete(idx) : this.unsavedNotes.add(idx);
+        saved ? this.unsavedNotes.delete(title as string) : this.unsavedNotes.add(title as string);
       }));
   }
 
@@ -109,6 +125,10 @@ export class SourceNavigatorComponent implements OnInit, OnDestroy {
 
   alterSaveStateTo(saved: boolean, title?: string): void {
     this.saveStateUpdateRequestStream.next([saved, title || this.choosen]);
+  }
+
+  hasUnsavedNotes(): boolean {
+    return this.unsavedNotes.size > 0;
   }
 
   // EVENTS

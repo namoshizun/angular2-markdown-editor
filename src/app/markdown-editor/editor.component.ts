@@ -1,5 +1,5 @@
-import { Component, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
-import { ReplaySubject } from "rxjs/ReplaySubject";
+import {Component, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { MdEditorComponent } from "./components/md-editor.component";
 import { MdViewerComponent } from "./components/md-viewer.component";
 import { SourceNavigatorComponent } from "./components/source-navigator.component";
@@ -7,6 +7,8 @@ import { SourceNavigatorComponent } from "./components/source-navigator.componen
 import '../vendor';
 import { ToolBarItem, Note } from '../core/types';
 import { MarkdownService } from "../core/services/markdown.service";
+import { WindowRef } from '../core/providers/browser.providers';
+
 
 @Component({
   selector: 'blog-editor',
@@ -18,8 +20,8 @@ export class EditiorComponent implements AfterViewInit, OnDestroy {
   @ViewChild(MdViewerComponent) private mdViewer: MdViewerComponent;
   @ViewChild(SourceNavigatorComponent) private noteNav: SourceNavigatorComponent;
 
-  textStream = new ReplaySubject<string>(1);
-  choosenNoteStream = new ReplaySubject<Note>(1);
+  textStream = new BehaviorSubject<string>(null);
+  choosenNoteStream = new BehaviorSubject<Note>(null);
 
   // View States
   viewConfig = {
@@ -29,8 +31,8 @@ export class EditiorComponent implements AfterViewInit, OnDestroy {
 
   readonly toolbarItems: ToolBarItem[][] = [
     [
-      { tooltip: 'Save Changes', glyph: 'glyphicon glyphicon-save',
-        callback: () => this.saveLatest() },
+      { tooltip: 'Sync', glyph: 'glyphicon glyphicon-floppy-disk',
+        callback: () => this.syncLatest() },
     ],
     [
       { tooltip: 'Close Preview', glyph: 'glyphicon glyphicon-eye-close',
@@ -46,7 +48,10 @@ export class EditiorComponent implements AfterViewInit, OnDestroy {
     ]
   ];
 
-  constructor(private mdService: MarkdownService) {}
+  constructor(private mdService: MarkdownService,
+              private window: WindowRef) {
+    // this.window.nativeWindow.onbeforeunload = (e) => '/* asking for confirmation */'
+  }
 
   ngAfterViewInit() {
     this.mdService.loadSampleMarkdown()
@@ -54,16 +59,14 @@ export class EditiorComponent implements AfterViewInit, OnDestroy {
       .catch(error => alert('Sorry, cannot load the sample markdown'));
   }
 
-  ngOnDestroy() {}
+  ngOnDestroy() {
+  }
 
-  saveLatest(): void {
-    this.choosenNoteStream.subscribe(currNote => {
-      this.textStream.subscribe(latestText => {
-        this.mdService.updateNote(currNote.title, 'text', latestText)
-          .then(ok => ok ? this.noteNav.alterSaveStateTo(true, currNote.title) : alert('Sorry, cannot save changes'))
-          .catch(console.error);
-      }).unsubscribe();
-    }).unsubscribe();
+  syncLatest(): void {
+    let [note, text] = [this.choosenNoteStream.getValue(), this.textStream.getValue()];
+    this.mdService.updateNote(note.title, 'text', text, true /* update both local and db note */)
+      .then(ok => ok ? this.noteNav.alterSaveStateTo(true, note.title) : alert('Sorry, cannot save changes'))
+      .catch(console.error);
   }
 
   // Dynamic css class providers
@@ -75,13 +78,21 @@ export class EditiorComponent implements AfterViewInit, OnDestroy {
   }
 
   // EVENT HANDLERS
-  passText(text: string): void {
+  handleChangeText(text: string): void {
     this.textStream.next(text);
     this.noteNav.alterSaveStateTo(false);
   }
 
-  passNote(noteTitle: string): void {
+  handleSelectNote(noteTitle: string): void {
+    let [currNote, currText] = [this.choosenNoteStream.getValue(), this.textStream.getValue()];
     this.choosenNoteStream.next(this.mdService.getNote(noteTitle));
+
+    if (currNote && currText) {
+      // save changes of current note
+      this.mdService.updateNote(currNote.title, 'text', currText)
+        .then(ok => this.choosenNoteStream.next(this.mdService.getNote(noteTitle)))
+        .catch(alert);
+    }
   }
 
   syncViews(ratio: number, fromEditorToViewer: boolean): void {

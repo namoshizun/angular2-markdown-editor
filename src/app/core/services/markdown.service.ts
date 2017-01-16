@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
-import '../../vendor';
 import { Note } from '../types';
+
+import '../../vendor';
 
 @Injectable()
 export class MarkdownService {
+
   private notes: Note[] = [];
   private creationCounter: number = 1;
 
@@ -26,6 +28,12 @@ export class MarkdownService {
     }
   }
 
+  private syncNote(note: Note): Promise<boolean> {
+    // todo
+    return Promise.resolve(true);
+  }
+
+  // GET
   getNote(title: string): Note {
     return this.notes.find((note: Note) => note.title === title);
   }
@@ -34,6 +42,7 @@ export class MarkdownService {
     return this.notes.map(note => note.title);
   }
 
+  // PUT
   addNewNote(): Promise<any> {
     return this.addNote({
       dateOfCreation: new Date(),
@@ -50,20 +59,27 @@ export class MarkdownService {
     })));
   }
 
-  updateNote(title: string, key: string, value: any): Promise<any> {
+  // POST
+  async updateNote(title: string, key: string, value: any, sync: boolean = false): Promise<any> {
     let [found, idx] = this.findNote(title);
-    if (found) {
-      if (key === 'title' && this.findNote(value)[0]) {
-        return Promise.reject(new Error(`Note with title ${value} already exists`))
-      }
+    if (!found) return new Error('Cannot update note');
+    if (key === 'title' && this.findNote(value)[0]) return new Error(`Note with title ${value} already exists`);
 
+    try {
+      if (sync) await this.syncNote(this.notes[idx]);
       this.notes[idx][key] = value;
-      return Promise.resolve(true);
-    } else {
-      return Promise.reject(new Error('Cannot update note'));
+      return true
+    }  catch (error) {
+      return new Error('Cannot update note');
     }
   }
 
+  syncAll(): Promise<boolean> {
+    // todo
+    return new Promise((resolve, reject) => setTimeout(() => resolve(true), 2000));
+  }
+
+  // DELETE
   deleteNote(title: string): Promise<any> {
     let [found, idx] = this.findNote(title);
     if (found) {

@@ -38,8 +38,7 @@ export class ToolBarComponent implements OnInit {
   _items: ToolBarItem[][] = [];
 
   @Input() set styleClasses(classes: string) {
-    let klasses = classes.split(' ');
-    klasses.forEach(klass => this.toolbarClass[klass] = true);
+    classes.split(' ').forEach(klass => this.toolbarClass[klass] = true);
   };
   @Input() set items (items: ToolBarItem[][]) {
     this._items = items;

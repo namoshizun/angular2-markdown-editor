@@ -3,16 +3,16 @@
   <div class="row">
     <!--NOTE NAVIGATOR-->
     <div class="col-xs-2">
-      <source-navigator (onSelectNote)="passNote($event); false"></source-navigator>
+      <source-navigator (onSelectNote)="handleSelectNote($event); false"></source-navigator>
     </div>
 
     <!--NOTE EDITOR-->
     <div [ngClass]="editorClass()"> <!-- !preview => col-xs-8; preview => col-xs-5 -->
-      <toolbar [styleClasses]="'editor-toolbar hoverable'"
+      <toolbar [styleClasses]="'editor-toolbar showWhenHovered'"
                [items]="toolbarItems">
       </toolbar>
       <markdown-editor [noteStream]="choosenNoteStream"
-                       (onTextInput)="passText($event); false"
+                       (onTextInput)="handleChangeText($event); false"
                        (onScroll)="syncViews($event, true); false">
       </markdown-editor>
     </div>
@@ -25,3 +25,4 @@
     </div>
   </div>
 </div>
+

@@ -59,6 +59,7 @@ export class MdViewerComponent implements OnInit, OnDestroy, Scrollable {
         .subscribe((ratio) => this.onScroll.emit(ratio)),
       // text stream
       this.contentStream
+        .skip(1)
         .debounceTime(250)
         .subscribe((text: string) => {
           this.viewer.innerHTML = this.md.render(text);

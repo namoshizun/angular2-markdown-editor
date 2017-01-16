@@ -52,11 +52,11 @@
 }
 
 /* Hover */
-.hoverable:hover {
+.showWhenHovered:hover {
   opacity: 1 !important;
 }
 
-.hoverable {
+.showWhenHovered {
   opacity: 0;
   transition: .5s ease-in-out all;
 }

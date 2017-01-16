@@ -5,6 +5,7 @@ import { Subscription } from "rxjs/Subscription";
 
 import { Scrollable, Note } from '../../core/types';
 import '../../vendor';
+import {distinctUntilChanged} from "rxjs/operator/distinctUntilChanged";
 
 declare var CodeMirror: any;
 
@@ -55,14 +56,16 @@ export class MdEditorComponent implements OnInit, OnDestroy, Scrollable {
       // scroll stream
       Observable.fromEvent(this.el.nativeElement, 'mouseenter')
         .flatMap(init => this.makeScrollStream())
-        .subscribe((ratio) => this.onScroll.emit(ratio)),
+        .subscribe(ratio => this.onScroll.emit(ratio)),
 
       // note stream
-      this.noteStream.subscribe((note: Note) => {
-        this.editor.setValue(note.text);
-        this.cd.markForCheck();
+      this.noteStream
+        .skip(1)
+        .subscribe((note: Note) => {
+          this.editor.setValue(note.text);
+          this.cd.markForCheck();
       })
-    )
+    );
   }
 
   makeScrollStream(): Observable<any> {
