@@ -26,7 +26,8 @@ export class EditiorComponent implements AfterViewInit, OnDestroy {
   // View States
   viewConfig = {
     keepSync: true,
-    enablePreview: true
+    enablePreview: true,
+    syncingNotes: false
   };
 
   readonly toolbarItems: ToolBarItem[][] = [
@@ -93,6 +94,10 @@ export class EditiorComponent implements AfterViewInit, OnDestroy {
         .then(ok => this.choosenNoteStream.next(this.mdService.getNote(noteTitle)))
         .catch(alert);
     }
+  }
+
+  handleSyncingNotes(syncing: boolean): void {
+    this.viewConfig.syncingNotes = syncing;
   }
 
   syncViews(ratio: number, fromEditorToViewer: boolean): void {

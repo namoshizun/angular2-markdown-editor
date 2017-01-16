@@ -1,9 +1,11 @@
 <div class="container-fluid">
+  <loading-mask *ngIf="viewConfig.syncingNotes"></loading-mask>
 
   <div class="row">
     <!--NOTE NAVIGATOR-->
     <div class="col-xs-2">
-      <source-navigator (onSelectNote)="handleSelectNote($event); false"></source-navigator>
+      <source-navigator (onSelectNote)="handleSelectNote($event); false"
+                        (onSyncingNotes)="handleSyncingNotes($event)"></source-navigator>
     </div>
 
     <!--NOTE EDITOR-->

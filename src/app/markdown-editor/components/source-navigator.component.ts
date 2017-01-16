@@ -24,10 +24,7 @@ export class SourceNavigatorComponent implements OnInit, OnDestroy {
    * state recorders *
    * ****************/
   unsavedNotes: Set<string> = new Set();
-  viewConfig = { // default setting
-    syncing: false,
-    deleteNotes: false,
-  };
+  deleteNotes: boolean = false;
 
   /******************
    * toolbar config *
@@ -43,22 +40,22 @@ export class SourceNavigatorComponent implements OnInit, OnDestroy {
     ],
     [
       { tooltip: 'Remove', glyph: 'glyphicon glyphicon-minus',
-        callback: () => this.viewConfig.deleteNotes = true },
+        callback: () => this.deleteNotes = true },
       { tooltip: 'Ok', glyph: 'glyphicon glyphicon-ok',
-        callback: () => this.viewConfig.deleteNotes = false },
+        callback: () => this.deleteNotes = false },
     ],
     [
       { tooltip: 'Sync All', glyph: 'glyphicon glyphicon-floppy-disk',
         callback: () => {
-          this.viewConfig.syncing = true;
+          this.onSyncingNotes.emit(true);
           this.mdService.syncAll()
             .then(ok => {
               if (ok) {
-                this.viewConfig.syncing = false;
                 this.unsavedNotes.clear();
               } else {
                 alert('Cannot sync all');
               }
+              this.onSyncingNotes.emit(false);
             })
             .catch(alert);
         }
@@ -68,6 +65,7 @@ export class SourceNavigatorComponent implements OnInit, OnDestroy {
 
   @ViewChild('uploader') uploader: UploaderModalComponent;
   @Output() onSelectNote = new EventEmitter<string>();
+  @Output() onSyncingNotes = new EventEmitter<boolean>();
 
   choosen: string;
   noteTitles: string[];

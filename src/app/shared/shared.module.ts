@@ -5,6 +5,7 @@ import { CommonModule } from "@angular/common";
 import { TooltipModule } from 'ng2-bootstrap/tooltip';
 import { ModalModule } from 'ng2-bootstrap/modal';
 
+import { LoadingMaskComponent } from './loading-mask.component';
 import { ToolBarComponent } from './tool-bar.component';
 import { ModalComponent } from './modal.component';
 
@@ -18,6 +19,7 @@ import { ModalComponent } from './modal.component';
     ModalModule.forRoot(),
   ],
   declarations: [
+    LoadingMaskComponent,
     ToolBarComponent,
     ModalComponent
   ],
@@ -26,6 +28,7 @@ import { ModalComponent } from './modal.component';
     ReactiveFormsModule,
     CommonModule,
     HttpModule,
+    LoadingMaskComponent,
     ToolBarComponent,
     ModalComponent
   ]
