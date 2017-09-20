@@ -16,8 +16,7 @@ This is a minimal markdown editor developed using [Angular2](https://github.com/
 
 ## Preview
 
-Note yet avaialble....
-
+https://test.yz-metta.com/editor
 
 
 ## Run it
