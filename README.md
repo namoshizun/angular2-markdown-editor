@@ -1,17 +1,17 @@
-# Angular2-Markdown Editor
+# Angular4-Markdown Editor
 
-This is a minimal markdown editor developed using [Angular2](https://github.com/angular/angular) framework, and the project scaffold is generated using the awesome [Angular-CLI](https://github.com/angular/angular-cli). This project is inspired by [Live Markdown Editor](https://github.com/jbt/markdown-editor)
+This is a minimal markdown editor developed using [Angular](https://github.com/angular/angular) framework, and the project scaffold is generated using the awesome [Angular-CLI](https://github.com/angular/angular-cli). This project is inspired by [Live Markdown Editor](https://github.com/jbt/markdown-editor)
 
 
 
 ## Dependencies
 
-* CodeMirror@2.4.1: 'a versatile text editor'
-* Markdown-it@8.2.2: generates HTML from markdown code. 
-* Highlight.js@9.9.0: complements the Markdown-it to have syntax highlighting for code blocks.
-* ng2-bootstrap@^1.1.16-11: provides Bootstrap components for Angular2 web app. For the time being I just use to make tooltips and modals. 
-* RxJs@5.0.0: an amazing library for managing events and states!  It's also possible to greatly improve Angular change detection performance with the help of Observables 
-* FuzzySearch@1.4.0: a lightweight fuzzy search library with zero dependency.
+* CodeMirror: 'a versatile text editor'
+* Markdown-it: generates HTML from markdown code. 
+* Highlight.js: complements the Markdown-it to have syntax highlighting for code blocks.
+* ng2-bootstrap: provides Bootstrap components for Angular2 web app. For the time being I just use to make tooltips and modals. 
+* RxJs5: an amazing library for managing events and states!  It's also possible to greatly improve Angular change detection performance with the help of Observables 
+* FuzzySearch: a lightweight fuzzy search library with zero dependency.
 
 
 ## Preview
@@ -28,9 +28,9 @@ Then setup and run
 
 > npm install
 >
-> npm start
+> ng serve
 
-Navigate to http://localhost:4200 to see the results.
+Navigate to http://localhost:4200/editor to see the editor.
 
 
 
