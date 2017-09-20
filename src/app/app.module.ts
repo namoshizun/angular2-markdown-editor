@@ -6,7 +6,7 @@ import { HttpModule } from '@angular/http';
 import { appRouting } from './app.routing';
 
 import { AppComponent } from './app.component';
-import { EditorModule } from "./markdown-editor/editor.module";
+import { EditorModule } from './markdown-editor/editor.module';
 
 @NgModule({
   declarations: [

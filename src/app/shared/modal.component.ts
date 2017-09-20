@@ -1,13 +1,16 @@
-import { Component, Input, Output } from '@angular/core'
+import { Component, Input, Output } from '@angular/core';
 import { EventEmitter, ViewChild, ChangeDetectionStrategy } from '@angular/core';
-import { ModalDirective } from 'ng2-bootstrap/modal';
+import { ModalDirective } from 'ngx-bootstrap/modal';
 
 @Component({
-  selector: 'modal',
+  selector: 'app-modal',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div bsModal #childModal="bs-modal" class="modal fade"
-         tabindex="-1" role="dialog" aria-labelledby="mdl" aria-hidden="true">
+    <div bsModal
+         #childModal="bs-modal"
+         class="modal fade"
+         tabindex="-1"
+         role="dialog" aria-labelledby="mdl" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <!--HEADER-->
@@ -27,7 +30,7 @@ import { ModalDirective } from 'ng2-bootstrap/modal';
   `
 })
 export class ModalComponent {
-  @Input() title: string = '';
+  @Input() title = '';
 
   @ViewChild('childModal') modal: ModalDirective;
 

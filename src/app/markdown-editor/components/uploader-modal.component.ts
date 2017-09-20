@@ -1,16 +1,16 @@
 import { Component, Output, EventEmitter, ViewChild, OnInit } from '@angular/core';
-import { FormControl, FormGroup, FormArray } from "@angular/forms";
+import { FormControl, FormGroup, FormArray } from '@angular/forms';
 
 import { ModalComponent } from '../../shared/modal.component';
 import { FileUploadQuestion, TextboxQuestion, QuestionBase } from '../../core/question.class';
 
-import { QuestionFactoryService } from "../../core/services/question.factory.service";
-import { MarkdownService } from "../../core/services/markdown.service";
-import { UtilService } from "../../core/services/util.service";
+import { QuestionFactoryService } from '../../core/services/question.factory.service';
+import { MarkdownService } from '../../core/services/markdown.service';
+import { UtilService } from '../../core/services/util.service';
 type UploadType = 'local' | 'url';
 
 @Component({
-  selector: 'uploader-modal',
+  selector: 'app-uploader-modal',
   templateUrl: '../templates/uploader-modal.html',
   styles: [`
     .confirm-btn {
@@ -35,8 +35,8 @@ export class UploaderModalComponent implements OnInit {
     label: 'Click to browse file',
     callback: (evt, group: FormGroup) => {
       // this is just a workaround solution since FormControl cannot capture uploaded files automatically
-      let file = evt.target.files[0];
-      let reader = new FileReader();
+      const file = evt.target.files[0];
+      const reader = new FileReader();
       reader.onload  = ((thefile) => (e) => group.patchValue({ source: e.target.result }))(file);
       reader.readAsText(file);
     }
@@ -77,7 +77,7 @@ export class UploaderModalComponent implements OnInit {
     return new FormGroup({
       source: this.getSourceControl(type),
       title: this.getTitleControl()
-    })
+    });
   }
 
   private getSourceControl(type: UploadType): FormControl {
@@ -109,19 +109,18 @@ export class UploaderModalComponent implements OnInit {
     try {
       this.resetForm();
       // filter empty sources
-      let urlSources = form.value['url'].filter(source => source['source'] !== '');
-      let localSources = form.value['local'].filter(source => source['source'] !== '');
+      const urlSources = form.value['url'].filter(source => source['source'] !== '');
+      const localSources = form.value['local'].filter(source => source['source'] !== '');
 
       // download sources
-      let texts = await Promise.all(urlSources.map(url=> this.util.download(url['source'])));
-      urlSources.forEach((url, idx) => url['source'] = texts[idx]) // replace url with the actual resource
+      const texts = await Promise.all(urlSources.map(url => this.util.download(url['source'])));
+      urlSources.forEach((url, idx) => url['source'] = texts[idx]); // replace url with the actual resource
 
       // upload
-      let uploaded = await this.mdService.uploadNote(urlSources.concat(localSources));
+      const uploaded = await this.mdService.uploadNote(urlSources.concat(localSources));
       uploaded ? this.onUploadFinished.emit(true) : alert('Cannot upload notes');
-    }
-    catch (error) {
-      alert('Something bad happened... Cannot upload notes!')
+    } catch (error) {
+      alert('Something bad happened... Cannot upload notes!');
     }
   }
 }

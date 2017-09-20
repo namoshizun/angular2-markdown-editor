@@ -1,29 +1,29 @@
 <div class="container-fluid">
-  <loading-mask *ngIf="viewConfig.syncingNotes"></loading-mask>
+  <app-loading-mask *ngIf="viewConfig.syncingNotes"></app-loading-mask>
 
   <div class="row">
     <!--NOTE NAVIGATOR-->
     <div class="col-xs-2">
-      <source-navigator (onSelectNote)="handleSelectNote($event); false"
-                        (onSyncingNotes)="handleSyncingNotes($event)"></source-navigator>
+      <app-source-navigator (onSelectNote)="handleSelectNote($event); false"
+                        (onSyncingNotes)="handleSyncingNotes($event)"></app-source-navigator>
     </div>
 
     <!--NOTE EDITOR-->
     <div [ngClass]="editorClass()"> <!-- !preview => col-xs-8; preview => col-xs-5 -->
-      <toolbar [styleClasses]="'editor-toolbar showWhenHovered'"
+      <app-toolbar [styleClasses]="'editor-toolbar showWhenHovered'"
                [items]="toolbarItems">
-      </toolbar>
-      <markdown-editor [noteStream]="choosenNoteStream"
+      </app-toolbar>
+      <app-editor [noteStream]="choosenNoteStream"
                        (onTextInput)="handleChangeText($event); false"
                        (onScroll)="syncViews($event, true); false">
-      </markdown-editor>
+      </app-editor>
     </div>
 
     <!--NOTE PREVIEWER-->
     <div *ngIf="viewConfig.enablePreview" class="col-xs-5">
-      <markdown-viewer [contentStream]="textStream"
+      <app-viewer [contentStream]="textStream"
                        (onScroll)="syncViews($event, false); false">
-      </markdown-viewer>
+      </app-viewer>
     </div>
   </div>
 </div>

@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { CommonModule } from "@angular/common";
-import { TooltipModule } from 'ng2-bootstrap/tooltip';
-import { ModalModule } from 'ng2-bootstrap/modal';
+import { CommonModule } from '@angular/common';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 import { LoadingMaskComponent } from './loading-mask.component';
 import { ToolBarComponent } from './tool-bar.component';

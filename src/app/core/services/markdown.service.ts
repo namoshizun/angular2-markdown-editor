@@ -8,20 +8,21 @@ import '../../vendor';
 export class MarkdownService {
 
   private notes: Note[] = [];
-  private creationCounter: number = 1;
+  private creationCounter = 1;
 
   // todo: change to actual http requests once server is setup
   constructor(private http: Http) {}
 
   private findNote(title: string): [boolean, number] {
-    let idx = this.notes.findIndex(note => note.title === title);
+    const idx = this.notes.findIndex(note => note.title === title);
     return [idx !== -1, idx];
   }
 
   private addNote(note: Note): Promise<any> {
-    let [noteExists, _] = this.findNote(note.title);
+    const [noteExists, _] = this.findNote(note.title);
+
     if (noteExists) {
-      return Promise.reject(new Error(`Note with title ${note.title} already exists`))
+      return Promise.reject(new Error(`Note with title ${note.title} already exists`));
     } else {
       this.notes.push(note);
       return Promise.resolve(note.title);
@@ -48,7 +49,7 @@ export class MarkdownService {
       dateOfCreation: new Date(),
       title: `Note No.${this.creationCounter++}`,
       text: ''
-    } as Note)
+    } as Note);
   }
 
   uploadNote(payload: any[]): Promise<any> {
@@ -61,14 +62,22 @@ export class MarkdownService {
 
   // POST
   async updateNote(title: string, key: string, value: any, sync: boolean = false): Promise<any> {
-    let [found, idx] = this.findNote(title);
-    if (!found) return new Error('Cannot update note');
-    if (key === 'title' && this.findNote(value)[0]) return new Error(`Note with title ${value} already exists`);
+    const [found, idx] = this.findNote(title);
+
+    if (!found) {
+      return new Error('Cannot update note');
+    }
+
+    if (key === 'title' && this.findNote(value)[0]) {
+      return new Error(`Note with title ${value} already exists`);
+    }
 
     try {
-      if (sync) await this.syncNote(this.notes[idx]);
+      if (sync) {
+        await this.syncNote(this.notes[idx]);
+      }
       this.notes[idx][key] = value;
-      return true
+      return true;
     }  catch (error) {
       return new Error('Cannot update note');
     }
@@ -81,9 +90,9 @@ export class MarkdownService {
 
   // DELETE
   deleteNote(title: string): Promise<any> {
-    let [found, idx] = this.findNote(title);
+    const [found, idx] = this.findNote(title);
     if (found) {
-      let deleted = this.notes.splice(idx, 1);
+      const deleted = this.notes.splice(idx, 1);
       return Promise.resolve(deleted);
     } else {
       return Promise.reject(new Error('Note does not exist'));
@@ -92,7 +101,7 @@ export class MarkdownService {
 
   // mock up
   loadSampleMarkdown(): Promise<any> {
-    return this.http.get('https://test.yz-metta.com/sample.md')
+    return this.http.get('https://yz-metta.com/ES6.md')
       .map((r: Response) => r['_body'])
       .toPromise()
       .then((sampleText: string) => this.notes.push({

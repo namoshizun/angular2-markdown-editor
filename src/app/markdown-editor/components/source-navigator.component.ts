@@ -1,18 +1,19 @@
 import { Component, Output } from '@angular/core';
 import { EventEmitter, ViewChild, OnInit, OnDestroy } from '@angular/core';
-import { Observable } from "rxjs/Observable";
-import { Subject } from "rxjs/Subject";
-import { Subscription } from "rxjs/Subscription";
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
+import { Subscription } from 'rxjs/Subscription';
 
 import { UploaderModalComponent } from './uploader-modal.component';
-import { MarkdownService } from "../../core/services/markdown.service";
+import { MarkdownService } from '../../core/services/markdown.service';
 
+import { ToolBarItem } from '../../core/types';
 import '../../vendor';
-import { ToolBarItem } from "../../core/types";
-var FuzzySearch = require('fuzzy-search/dist/FuzzySearch');
+
+const FuzzySearch = require('fuzzy-search/dist/FuzzySearch');
 
 @Component({
-  selector: 'source-navigator',
+  selector: 'app-source-navigator',
   templateUrl: '../templates/source-navigator.html',
   styles: [`
     .selected { background-color: #cfdff9 }
@@ -24,7 +25,7 @@ export class SourceNavigatorComponent implements OnInit, OnDestroy {
    * state recorders *
    * ****************/
   unsavedNotes: Set<string> = new Set();
-  deleteNotes: boolean = false;
+  deleteNotes = false;
 
   /******************
    * toolbar config *
@@ -95,16 +96,18 @@ export class SourceNavigatorComponent implements OnInit, OnDestroy {
         .distinctUntilChanged()
       )
       .subscribe(request => {
-        let [saved, title] = [...request];
+        const [saved, title] = [...request];
         saved ? this.unsavedNotes.delete(title as string) : this.unsavedNotes.add(title as string);
       }));
   }
 
-  ngOnDestroy() { this.$subscriptions.forEach(sub => sub.unsubscribe()) }
+  ngOnDestroy() {
+    this.$subscriptions.forEach(sub => sub.unsubscribe());
+  }
 
   private search(keyword: string): string[] {
-    if (keyword == '') return this.noteTitles;
-    let fuzzy = new FuzzySearch(this.noteTitles);
+    if (keyword === '') return this.noteTitles;
+    const fuzzy = new FuzzySearch(this.noteTitles);
     return fuzzy.search(keyword);
   }
 

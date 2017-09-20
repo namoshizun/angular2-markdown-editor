@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { BROWSER_GLOBALS_PROVIDERS, WindowRef } from '../core/providers/browser.providers';
 @Component({
-  selector: 'loading-mask',
+  selector: 'app-loading-mask',
   template: `
     <div id="mask">
       <div class="loader"></div>
@@ -23,7 +23,7 @@ import { BROWSER_GLOBALS_PROVIDERS, WindowRef } from '../core/providers/browser.
     ...BROWSER_GLOBALS_PROVIDERS
   ]
 })
-export class LoadingMaskComponent implements OnInit ,OnDestroy {
+export class LoadingMaskComponent implements OnInit, OnDestroy {
   constructor(private windowRef: WindowRef) {}
 
   discardEvent() {}

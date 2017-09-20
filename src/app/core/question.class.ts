@@ -1,6 +1,6 @@
 import { QuestionSpec } from './types';
 
-export class QuestionBase<T> implements QuestionSpec<T>{
+export class QuestionBase<T> implements QuestionSpec<T> {
   value?: T;
   key?: string;
   label?: string;

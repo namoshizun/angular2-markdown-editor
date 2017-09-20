@@ -1,17 +1,17 @@
 import {Component, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { MdEditorComponent } from "./components/md-editor.component";
-import { MdViewerComponent } from "./components/md-viewer.component";
-import { SourceNavigatorComponent } from "./components/source-navigator.component";
+import { MdEditorComponent } from './components/md-editor.component';
+import { MdViewerComponent } from './components/md-viewer.component';
+import { SourceNavigatorComponent } from './components/source-navigator.component';
 
 import '../vendor';
 import { ToolBarItem, Note } from '../core/types';
-import { MarkdownService } from "../core/services/markdown.service";
+import { MarkdownService } from '../core/services/markdown.service';
 import { WindowRef } from '../core/providers/browser.providers';
 
 
 @Component({
-  selector: 'blog-editor',
+  selector: 'app-blog-editor',
   templateUrl: 'templates/editor.html',
 })
 export class EditiorComponent implements AfterViewInit, OnDestroy {
@@ -42,7 +42,7 @@ export class EditiorComponent implements AfterViewInit, OnDestroy {
         callback: () => this.viewConfig.enablePreview = true }
     ],
     [
-      { tooltip: 'No Sync',glyph: 'glyphicon glyphicon-random',
+      { tooltip: 'No Sync', glyph: 'glyphicon glyphicon-random',
         callback: () => this.viewConfig.keepSync = false },
       { tooltip: 'Sync Views', glyph: 'glyphicon glyphicon-retweet',
         callback: () => this.viewConfig.keepSync = true }
@@ -64,7 +64,7 @@ export class EditiorComponent implements AfterViewInit, OnDestroy {
   }
 
   syncLatest(): void {
-    let [note, text] = [this.choosenNoteStream.getValue(), this.textStream.getValue()];
+    const [note, text] = [this.choosenNoteStream.getValue(), this.textStream.getValue()];
     this.mdService.updateNote(note.title, 'text', text, true /* update both local and db note */)
       .then(ok => ok ? this.noteNav.alterSaveStateTo(true, note.title) : alert('Sorry, cannot save changes'))
       .catch(console.error);
@@ -75,7 +75,7 @@ export class EditiorComponent implements AfterViewInit, OnDestroy {
    return {
      'col-xs-8': !this.viewConfig.enablePreview,
      'col-xs-5': this.viewConfig.enablePreview,
-   }
+   };
   }
 
   // EVENT HANDLERS
@@ -85,7 +85,7 @@ export class EditiorComponent implements AfterViewInit, OnDestroy {
   }
 
   handleSelectNote(noteTitle: string): void {
-    let [currNote, currText] = [this.choosenNoteStream.getValue(), this.textStream.getValue()];
+    const [currNote, currText] = [this.choosenNoteStream.getValue(), this.textStream.getValue()];
     this.choosenNoteStream.next(this.mdService.getNote(noteTitle));
 
     if (currNote && currText) {

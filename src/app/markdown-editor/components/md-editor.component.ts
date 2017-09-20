@@ -1,16 +1,15 @@
 import {Component, Input, Output, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { OnInit, OnDestroy, EventEmitter, ElementRef } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { Subscription } from "rxjs/Subscription";
+import { Subscription } from 'rxjs/Subscription';
 
 import { Scrollable, Note } from '../../core/types';
 import '../../vendor';
-import {distinctUntilChanged} from "rxjs/operator/distinctUntilChanged";
 
 declare var CodeMirror: any;
 
 @Component({
-  selector: 'markdown-editor',
+  selector: 'app-editor',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <textarea id="code"></textarea>
@@ -47,7 +46,7 @@ export class MdEditorComponent implements OnInit, OnDestroy, Scrollable {
   }
 
   scrollTo(ratio: number): void {
-    let yPos = (this.editor.getScrollInfo().height - this.editor.getScrollInfo().clientHeight) * ratio;
+    const yPos = (this.editor.getScrollInfo().height - this.editor.getScrollInfo().clientHeight) * ratio;
     this.editor.scrollTo(0, yPos); // x, y
   }
 
@@ -69,8 +68,8 @@ export class MdEditorComponent implements OnInit, OnDestroy, Scrollable {
   }
 
   makeScrollStream(): Observable<any> {
-    let $scroll = Observable.fromEvent(this.editor, 'scroll');
-    let $mouseleave = Observable.fromEvent(this.el.nativeElement, 'mouseleave');
+    const $scroll = Observable.fromEvent(this.editor, 'scroll');
+    const $mouseleave = Observable.fromEvent(this.el.nativeElement, 'mouseleave');
     return $scroll.map((cm: any) => {
       return parseFloat(cm.getScrollInfo().top) / (cm.getScrollInfo().height - cm.getScrollInfo().clientHeight)
     }).takeUntil($mouseleave);

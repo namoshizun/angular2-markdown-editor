@@ -7,9 +7,9 @@
   </div>
   <!--TOOL BAR-->
   <div class="row">
-    <toolbar [styleClasses]="'nav-toolbar'"
+    <app-toolbar [styleClasses]="'nav-toolbar'"
              [items]="navigatorToolItems">
-    </toolbar>
+    </app-toolbar>
   </div>
   <!--NOTE LIST-->
   <div class="row">
@@ -40,5 +40,5 @@
 
 
 <!--MODAL (hidden)-->
-<uploader-modal #uploader (onUploadFinished)="handleUploadFinished($event)">
-</uploader-modal>
+<app-uploader-modal #uploader (onUploadFinished)="handleUploadFinished($event)">
+</app-uploader-modal>

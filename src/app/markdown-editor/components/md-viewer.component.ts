@@ -1,16 +1,16 @@
 import {Component, Input, Output, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { ElementRef, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { Subscription } from "rxjs/Subscription";
+import { Subscription } from 'rxjs/Subscription';
 
 import { Scrollable } from '../../core/types';
 import '../../vendor';
 
-var MarkdownIt = require('markdown-it');
-var hljs = require('highlight.js');
+const MarkdownIt = require('markdown-it');
+const hljs = require('highlight.js');
 
 @Component({
-  selector: 'markdown-viewer',
+  selector: 'app-viewer',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<div id="md-result"></div>`
 })
@@ -69,8 +69,8 @@ export class MdViewerComponent implements OnInit, OnDestroy, Scrollable {
   }
 
   makeScrollStream(): Observable<any> {
-    let scrollStream = Observable.fromEvent(this.viewer, 'scroll');
-    let mouseleaveStream = Observable.fromEvent(this.el.nativeElement, 'mouseleave');
+    const scrollStream = Observable.fromEvent(this.viewer, 'scroll');
+    const mouseleaveStream = Observable.fromEvent(this.el.nativeElement, 'mouseleave');
     return scrollStream.map(_ => {
       return this.viewer.scrollTop / (this.viewer.scrollHeight - this.viewer.clientHeight)
     }).takeUntil(mouseleaveStream);

@@ -1,4 +1,4 @@
-<modal *ngIf="form"
+<app-modal *ngIf="form"
        #modal
        [title]="modalTitle">
 
@@ -11,8 +11,8 @@
       <div class="col-xs-10">
         <div formArrayName="local" class="row">
           <div *ngFor="let group of form.controls.local.controls; let i = index">
-            <source-input [group]="group" [question]="localSourceQuestion"></source-input>
-            <source-input [group]="group" [question]="titleQuestion"></source-input>
+            <app-source-input [group]="group" [question]="localSourceQuestion"></app-source-input>
+            <app-source-input [group]="group" [question]="titleQuestion"></app-source-input>
             <span class="glyphicon glyphicon-minus col-xs-1" (click)="handleDeleteGroup('local', i)"></span>
             <span class="glyphicon glyphicon-plus col-xs-1" (click)="handleAddGroup('local')"></span>
           </div>
@@ -26,8 +26,8 @@
       <div class="col-xs-10">
         <div formArrayName="url" class="row">
           <div *ngFor="let group of form.controls.url.controls; let i = index">
-            <source-input [group]="group" [question]="urlSourceQuestion"></source-input>
-            <source-input [group]="group" [question]="titleQuestion"></source-input>
+            <app-source-input [group]="group" [question]="urlSourceQuestion"></app-source-input>
+            <app-source-input [group]="group" [question]="titleQuestion"></app-source-input>
             <span class="glyphicon glyphicon-minus col-xs-1" (click)="handleDeleteGroup('url', i)"></span>
             <span class="glyphicon glyphicon-plus col-xs-1" (click)="handleAddGroup('url')"></span>
           </div>
@@ -35,4 +35,4 @@
       </div>
     </div>
   </form>
-</modal>
+</app-modal>

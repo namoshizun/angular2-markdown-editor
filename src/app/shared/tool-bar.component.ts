@@ -1,15 +1,15 @@
 import { Component, Input } from '@angular/core';
-import { OnInit, ChangeDetectionStrategy } from '@angular/core'
+import { OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ToolBarItem } from '../core/types';
 
 @Component({
-  selector: 'toolbar',
+  selector: 'app-toolbar',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
+  template: `    
     <div class="btn-toolbar toolbar" role="toolbar"
          aria-label="toolbar with button groupts"
          [ngClass]="toolbarClass">
-         
+
       <div class="btn-group" role="group" aria-label="first group">
         <button type="button"
                 class="btn btn-default"
@@ -39,7 +39,7 @@ export class ToolBarComponent implements OnInit {
 
   @Input() set styleClasses(classes: string) {
     classes.split(' ').forEach(klass => this.toolbarClass[klass] = true);
-  };
+  }
   @Input() set items (items: ToolBarItem[][]) {
     this._items = items;
     this._items.forEach(item => this.stateTable.push({

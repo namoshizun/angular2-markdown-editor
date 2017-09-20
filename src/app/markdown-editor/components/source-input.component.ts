@@ -1,9 +1,9 @@
 import { Component, Input} from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { QuestionBase } from "../../core/question.class";
+import { QuestionBase } from '../../core/question.class';
 
 @Component({
-  selector: 'source-input',
+  selector: 'app-source-input',
   template: `
     <div [formGroup]="group">
       <div class="form-group col-xs-5">
@@ -22,7 +22,7 @@ export class SourceInputComponent {
   @Input() question: QuestionBase<any>;
 
   isInvalidInput(key: string): boolean {
-    let control = this.group.controls[key];
+    const control = this.group.controls[key];
     return control.errors && (control.touched || control.dirty);
   }
 
